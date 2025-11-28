@@ -1,0 +1,9 @@
+{
+  "cSpell.ignorePaths": [
+    "package-lock.json",
+    ".git/{info,lfs,logs,refs,objects}/**",
+    ".git/{index,*refs,*HEAD}",
+    ".vscode",
+    "./src/index.css"
+  ]
+}
