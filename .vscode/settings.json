@@ -7,5 +7,6 @@
     "./src/index.css",
     "*.config.js",
     "./src/components/ui"
-  ]
+  ],
+  "cSpell.allowCompoundWords": true
 }
