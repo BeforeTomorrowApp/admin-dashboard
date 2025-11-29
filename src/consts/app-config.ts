@@ -1,13 +1,13 @@
 // We currently only support these two regions. Will expand in the future
-export type ServiceRegion = "US" | "CN";
+export type Language = "EN" | "ZH";
 export type AddressFormat = "building-first" | "country-first";
-export type CountryAddressFormat = Record<ServiceRegion, AddressFormat>;
+export type CountryAddressFormat = Record<Language, AddressFormat>;
 
-export function getCountryAddressFormat(region: ServiceRegion): AddressFormat {
-  switch (region) {
-    case "CN":
+export function getCountryAddressFormat(language: Language): AddressFormat {
+  switch (language) {
+    case "ZH":
       return "country-first";
-    case "US":
+    case "EN":
       return "building-first";
     default:
       return "building-first";

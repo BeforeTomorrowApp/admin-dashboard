@@ -1,14 +1,20 @@
-import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
+import { SidebarProvider } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/AppSidebar";
-import RegionProvider from "@/contexts/RegionContext";
+import AppContextProvider from "@/contexts/AppContext";
+import AppHeader from "@/components/AppHeader";
 
 export default function AppLayout() {
   return (
-    <RegionProvider>
+    <AppContextProvider>
       <SidebarProvider>
-        <AppSidebar />
-        <SidebarTrigger />
+        <nav>
+          <AppSidebar />
+        </nav>
+        <main className="flex flex-col w-full">
+          <AppHeader />
+          <div className="flex-1">Body</div>
+        </main>
       </SidebarProvider>
-    </RegionProvider>
+    </AppContextProvider>
   );
 }

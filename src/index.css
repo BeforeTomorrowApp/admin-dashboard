@@ -124,13 +124,8 @@
   body {
     @apply bg-background text-foreground flex m-0 h-dvh w-dvw;
   }
-}
 
-@layer base {
-  * {
-    @apply border-border outline-ring/50;
-  }
-  body {
-    @apply bg-background text-foreground;
+  #root {
+    @apply w-full;
   }
 }
