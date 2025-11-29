@@ -4,6 +4,8 @@
     ".git/{info,lfs,logs,refs,objects}/**",
     ".git/{index,*refs,*HEAD}",
     ".vscode",
-    "./src/index.css"
+    "./src/index.css",
+    "*.config.js",
+    "./src/components/ui"
   ]
 }
