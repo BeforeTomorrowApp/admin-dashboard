@@ -1,13 +1,11 @@
-import { useContext } from "react";
-import { AppContext } from "@/contexts/AppContext";
-import { SidebarTrigger } from "./ui/sidebar";
+import { SidebarTrigger } from "@/components/ui/sidebar";
+import LanguageSelector from "@/components/LanguageSelector";
 
 export default function AppHeader() {
-  const { language } = useContext(AppContext);
   return (
     <header className="w-full flex items-center">
       <SidebarTrigger />
-      <h3>{language}</h3>
+      <LanguageSelector />
     </header>
   );
 }

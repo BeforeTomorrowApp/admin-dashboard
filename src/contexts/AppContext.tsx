@@ -1,14 +1,20 @@
 import { useState, createContext } from "react";
 import {
   getCountryAddressFormat,
+  LOCALSTORAGE_KEY,
   type AddressFormat,
   type Language,
 } from "@/consts/app-config";
 
+// Types
 interface AppContextType {
   language: Language;
   addressFormat: AddressFormat;
-  updateRegion: (newLanguage: Language) => void;
+  updateLanguage: (newLanguage: Language) => void;
+}
+
+interface AppConfigLocalstorageType {
+  language?: Language;
 }
 
 type AppConfigInfo = {
@@ -16,37 +22,51 @@ type AppConfigInfo = {
   addressFormat: AddressFormat;
 };
 
-// first check the localStorage, if exists, set service region, else default CN
 const DEFAULT_LANGUAGE: Language = "ZH";
-const DEFAULT_ADDRESS_FORMAT: AddressFormat = getCountryAddressFormat(DEFAULT_LANGUAGE);
 
-// service region content
+// Check local AppConfig, if localStorage or field miss, fill default value
+const updateLocalStorage = (newAppConfig: AppConfigLocalstorageType) => {
+  localStorage.setItem(LOCALSTORAGE_KEY, JSON.stringify(newAppConfig));
+};
+const localAppConfig: AppConfigLocalstorageType = JSON.parse(
+  localStorage.getItem(LOCALSTORAGE_KEY) || "{}"
+);
+if (!localAppConfig["language"]) {
+  localAppConfig["language"] = DEFAULT_LANGUAGE;
+  updateLocalStorage(localAppConfig);
+}
+const languageConfig = localAppConfig["language"] as Language;
+const addressFormat = getCountryAddressFormat(languageConfig);
+
+// Create App context
 const AppContext = createContext<AppContextType>({
-  language: DEFAULT_LANGUAGE,
-  addressFormat: DEFAULT_ADDRESS_FORMAT,
-  updateRegion: () => {},
+  language: languageConfig,
+  addressFormat: addressFormat,
+  updateLanguage: () => {},
 });
 
 export default function AppContextProvider({ children }: { children: React.ReactNode }) {
   // wrap region and address information into a single state to avoid
   // unnecessary re-renderings
   const [regionInfo, setRegionInfo] = useState<AppConfigInfo>({
-    language: DEFAULT_LANGUAGE,
-    addressFormat: DEFAULT_ADDRESS_FORMAT,
+    language: languageConfig,
+    addressFormat: addressFormat,
   });
 
-  const updateRegion = (newLanguage: Language) => {
+  const updateLanguage = (newLanguage: Language) => {
     setRegionInfo(() => ({
       language: newLanguage,
       addressFormat: getCountryAddressFormat(newLanguage),
     }));
+    localAppConfig["language"] = newLanguage;
+    updateLocalStorage(localAppConfig);
   };
 
   return (
     <AppContext.Provider
       value={{
         ...regionInfo,
-        updateRegion,
+        updateLanguage,
       }}
     >
       {children}
