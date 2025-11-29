@@ -53,3 +53,5 @@ export default function RegionProvider({ children }: { children: React.ReactNode
     </RegionContext.Provider>
   );
 }
+
+export { RegionContext };
