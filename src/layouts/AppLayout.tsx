@@ -1,6 +1,6 @@
 import { SidebarProvider } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/AppSidebar";
-import AppContextProvider from "@/contexts/AppContext";
+import AppContextProvider from "@/contexts/AppContextProvider";
 import AppHeader from "@/components/AppHeader";
 
 export default function AppLayout() {

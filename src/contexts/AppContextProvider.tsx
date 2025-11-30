@@ -1,28 +1,33 @@
-import { useState, createContext } from "react";
+import { useState, useEffect, createContext } from "react";
 import {
   getCountryAddressFormat,
   LOCALSTORAGE_KEY,
   type AddressFormat,
   type Language,
+  type Theme,
 } from "@/consts/app-config";
 
 // Types
 interface AppContextType {
+  theme: Theme;
   language: Language;
   addressFormat: AddressFormat;
   updateLanguage: (newLanguage: Language) => void;
+  updateTheme: (newTheme: Theme) => void;
 }
 
 interface AppConfigLocalstorageType {
   language?: Language;
+  theme?: Theme;
 }
 
-type AppConfigInfo = {
+type ServiceInfo = {
   language: Language;
   addressFormat: AddressFormat;
 };
 
 const DEFAULT_LANGUAGE: Language = "ZH";
+const DEFAULT_THEME: Theme = "system";
 
 // Check local AppConfig, if localStorage or field miss, fill default value
 const updateLocalStorage = (newAppConfig: AppConfigLocalstorageType) => {
@@ -35,26 +40,35 @@ if (!localAppConfig["language"]) {
   localAppConfig["language"] = DEFAULT_LANGUAGE;
   updateLocalStorage(localAppConfig);
 }
+if (!localAppConfig["theme"]) {
+  localAppConfig["theme"] = DEFAULT_THEME;
+}
+
 const languageConfig = localAppConfig["language"] as Language;
+const themeConfig = localAppConfig["theme"] as Theme;
 const addressFormat = getCountryAddressFormat(languageConfig);
 
 // Create App context
 const AppContext = createContext<AppContextType>({
+  theme: themeConfig,
   language: languageConfig,
   addressFormat: addressFormat,
   updateLanguage: () => {},
+  updateTheme: () => {},
 });
 
 export default function AppContextProvider({ children }: { children: React.ReactNode }) {
   // wrap region and address information into a single state to avoid
   // unnecessary re-renderings
-  const [regionInfo, setRegionInfo] = useState<AppConfigInfo>({
+  const [serviceInfo, setServiceInfo] = useState<ServiceInfo>({
     language: languageConfig,
     addressFormat: addressFormat,
   });
+  const [theme, setTheme] = useState<Theme>(themeConfig);
 
+  // context update methods
   const updateLanguage = (newLanguage: Language) => {
-    setRegionInfo(() => ({
+    setServiceInfo(() => ({
       language: newLanguage,
       addressFormat: getCountryAddressFormat(newLanguage),
     }));
@@ -62,11 +76,34 @@ export default function AppContextProvider({ children }: { children: React.React
     updateLocalStorage(localAppConfig);
   };
 
+  const updateTheme = (newTheme: Theme) => {
+    setTheme(newTheme);
+    localAppConfig["theme"] = newTheme;
+    updateLocalStorage(localAppConfig);
+  };
+
+  // use an useEffect hook to control theme
+  useEffect(() => {
+    const root = window.document.documentElement;
+    root.classList.remove("light", "dark");
+
+    if (theme === "system") {
+      const systemTheme = window.matchMedia("(prefers-color-scheme: dark)").matches
+        ? "dark"
+        : "light";
+      root.classList.add(systemTheme);
+      return;
+    }
+    root.classList.add(theme);
+  }, [theme]);
+
   return (
     <AppContext.Provider
       value={{
-        ...regionInfo,
+        ...serviceInfo,
+        theme,
         updateLanguage,
+        updateTheme,
       }}
     >
       {children}

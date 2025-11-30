@@ -1,33 +1,43 @@
-import { useContext } from "react";
 import { describe, vi, it, expect, beforeEach } from "vitest";
 import { fireEvent, render, screen } from "@testing-library/react";
-import AppContextProvider, { AppContext } from "./AppContext";
+import AppContextProvider from "./AppContextProvider";
+import { useAppContext } from "@/hooks/useAppContext";
 import { LOCALSTORAGE_KEY } from "@/consts/app-config";
 
 // Test component that uses the context
 function TestComponent() {
-  const { language, addressFormat, updateLanguage } = useContext(AppContext);
+  const { theme, language, addressFormat, updateLanguage, updateTheme } = useAppContext();
 
   return (
     <div>
       <div data-testid="region">{language}</div>
       <div data-testid="format">{addressFormat}</div>
+      <div data-testid="theme">{theme}</div>
       <button data-testid="en-button" onClick={() => updateLanguage("EN")}>
         Change to US
       </button>
       <button data-testid="zh-button" onClick={() => updateLanguage("ZH")}>
         Change to US
       </button>
+      <button data-testid="light-button" onClick={() => updateTheme("light")}>
+        Change to light theme
+      </button>
+      <button data-testid="dark-button" onClick={() => updateTheme("dark")}>
+        Change to dark theme
+      </button>
+      <button data-testid="system-button" onClick={() => updateTheme("system")}>
+        Change to system theme
+      </button>
     </div>
   );
 }
 
-describe("RegionContext", () => {
+describe("AppContextProvider", () => {
   beforeEach(() => {
     localStorage.clear();
   });
 
-  it("provides default CN region", () => {
+  it("provides default CN region and system theme", () => {
     render(
       <AppContextProvider>
         <TestComponent />
@@ -35,6 +45,7 @@ describe("RegionContext", () => {
     );
     expect(screen.getByText("ZH")).toBeTruthy();
     expect(screen.getByText("country-first")).toBeTruthy();
+    expect(screen.getByText("system")).toBeTruthy();
   });
 
   it("updates region when updateLanguage is called", async () => {
@@ -52,6 +63,29 @@ describe("RegionContext", () => {
     fireEvent.click(changeCNButton);
     expect(screen.getByText("ZH")).toBeTruthy();
     expect(screen.getByText("country-first")).toBeTruthy();
+  });
+
+  it("updates them when updateTheme is called", async () => {
+    // Override matchMedia for this specific test
+    window.matchMedia = vi.fn().mockImplementation((query: string) => ({
+      matches: query === "(prefers-color-scheme: dark)",
+    }));
+    render(
+      <AppContextProvider>
+        <TestComponent />
+      </AppContextProvider>
+    );
+    const lightButton = screen.getByTestId("light-button");
+    fireEvent.click(lightButton);
+    expect(screen.getByText("light")).toBeTruthy();
+
+    const darkButton = screen.getByTestId("dark-button");
+    fireEvent.click(darkButton);
+    expect(screen.getByText("dark")).toBeTruthy();
+
+    const systemButton = screen.getByTestId("system-button");
+    fireEvent.click(systemButton);
+    expect(screen.getByText("system")).toBeTruthy();
   });
 
   it("persists language to localStorage", () => {
@@ -74,17 +108,22 @@ describe("RegionContext", () => {
     expect(screen.getByText("ZH")).toBeTruthy();
   });
 
-  it("loads language from localStorage on mount", async () => {
+  it("loads config from localStorage on mount", async () => {
     vi.resetModules(); // clear modules to allow modules been loaded after local storage setup
-    localStorage.setItem(LOCALSTORAGE_KEY, JSON.stringify({ language: "EN" }));
+    localStorage.setItem(
+      LOCALSTORAGE_KEY,
+      JSON.stringify({ language: "EN", theme: "dark" })
+    );
     // Dynamically import the module AFTER setting localStorage
-    const { default: AppContextProvider, AppContext } = await import("./AppContext");
+    const { default: AppContextProvider } = await import("./AppContextProvider");
+    const { useAppContext } = await import("../hooks/useAppContext");
     function LocalTestComponent() {
-      const { language, addressFormat } = useContext(AppContext);
+      const { language, addressFormat, theme } = useAppContext();
       return (
         <div>
           <div data-testid="region">{language}</div>
           <div data-testid="format">{addressFormat}</div>
+          <div data-testid="theme">{theme}</div>
         </div>
       );
     }
@@ -93,7 +132,9 @@ describe("RegionContext", () => {
         <LocalTestComponent />
       </AppContextProvider>
     );
+
     expect(screen.getByText("EN")).toBeTruthy();
     expect(screen.getByText("building-first")).toBeTruthy();
+    expect(screen.getByText("dark")).toBeTruthy();
   });
 });

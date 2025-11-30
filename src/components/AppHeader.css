@@ -1,0 +1,17 @@
+@import "../index.css";
+
+.header {
+  @apply w-full flex items-center justify-between py-3;
+}
+
+.header-configs {
+  @apply flex gap-3 h-full;
+}
+
+.header-selector {
+  @apply flex items-center justify-center gap-2;
+}
+
+.header-selector__trigger {
+  @apply focus-visible:ring-0;
+}
