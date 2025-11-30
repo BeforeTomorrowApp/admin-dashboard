@@ -16,5 +16,8 @@ export default defineConfig({
     globals: true,
     environment: "jsdom",
     setupFiles: "./src/lib/test-utils.ts",
+    coverage: {
+      exclude: ["**/components/ui/**"],
+    },
   },
 });

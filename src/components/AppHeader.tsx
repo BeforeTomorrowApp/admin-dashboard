@@ -1,11 +1,18 @@
 import { SidebarTrigger } from "@/components/ui/sidebar";
+import { Separator } from "@/components/ui/separator";
 import LanguageSelector from "@/components/LanguageSelector";
+import ThemeSelector from "./ThemeSelector";
+import "./AppHeader.css";
 
 export default function AppHeader() {
   return (
-    <header className="w-full flex items-center">
+    <header className="header">
       <SidebarTrigger />
-      <LanguageSelector />
+      <section className="header-configs">
+        <LanguageSelector />
+        <Separator orientation="vertical" />
+        <ThemeSelector />
+      </section>
     </header>
   );
 }

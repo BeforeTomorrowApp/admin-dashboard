@@ -19,6 +19,21 @@ const localStorageMock = (() => {
 })();
 
 window.localStorage = localStorageMock as Storage;
+
+// Mock matchMedia
+Object.defineProperty(window, "matchMedia", {
+  writable: true,
+  value: vi.fn().mockImplementation(() => ({
+    matches: false, // default to light mode
+    onchange: null,
+    addListener: vi.fn(),
+    removeListener: vi.fn(),
+    addEventListener: vi.fn(),
+    removeEventListener: vi.fn(),
+    dispatchEvent: vi.fn(),
+  })),
+});
+
 beforeEach(() => {
   localStorage.clear();
   vi.clearAllMocks();
