@@ -15,6 +15,7 @@ export default function InputAndButton({ onButtonClick, ...props }: InputAndButt
       <Button
         className="rounded-full"
         variant="secondary"
+        data-testid="input-and-button__button"
         onClick={(e) => {
           e.preventDefault();
           onButtonClick(inputRef.current?.value);
