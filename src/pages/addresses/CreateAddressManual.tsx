@@ -45,9 +45,9 @@ export default function CreateAddressesManual() {
     validators: {
       onDynamic: NewAddressRequest,
     },
-    onSubmit: async ({ value }) => {
-      console.log(value); // replace this with a real logic
-    },
+    // onSubmit: async ({ value }) => {
+    // console.log(value); // replace this with a real logic
+    // },
   });
 
   const handleAddTag = (value: string | undefined) => {
