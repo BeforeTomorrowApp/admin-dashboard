@@ -39,16 +39,13 @@ describe("CreateAddressesManual", () => {
 
     // Check for action buttons
     expect(screen.getByRole("button", { name: "Submit" })).toBeTruthy();
-    expect(screen.getByRole("button", { name: "Cancel" })).toBeTruthy();
   });
 
   it("renders with correct placeholder texts", () => {
     renderWithProviders(<CreateAddressesManual />);
 
     expect(screen.getByPlaceholderText("e.g. Anton Chekhov")).toBeTruthy();
-    expect(
-      screen.getByPlaceholderText("Tags, multiple tags can separate by ;")
-    ).toBeTruthy();
+    expect(screen.getByTestId("address-form-tag__input")).toBeTruthy();
     expect(
       screen.getByPlaceholderText("A Russian playwright and short-story writer.")
     ).toBeTruthy();
@@ -93,7 +90,7 @@ describe("CreateAddressesManual", () => {
 
   it("adds a single tag when add button is clicked", async () => {
     renderWithProviders(<CreateAddressesManual />);
-    const tagInput = screen.getByPlaceholderText("Tags, multiple tags can separate by ;");
+    const tagInput = screen.getByTestId("address-form-tag__input");
     const addButton = screen.getByTestId("input-and-button__button"); // Third button is the add button
     fireEvent.change(tagInput, { target: { value: "writer" } });
     fireEvent.click(addButton);
@@ -113,7 +110,7 @@ describe("CreateAddressesManual", () => {
 
   it("removes a tag when remove button is clicked", async () => {
     renderWithProviders(<CreateAddressesManual />);
-    const tagInput = screen.getByPlaceholderText("Tags, multiple tags can separate by ;");
+    const tagInput = screen.getByTestId("address-form-tag__input");
     const addButton = screen.getByTestId("input-and-button__button");
     fireEvent.change(tagInput, { target: { value: "writer;playwright" } });
     fireEvent.click(addButton);
@@ -138,7 +135,7 @@ describe("CreateAddressesManual", () => {
     // Fill all required fields
     const nameInput = screen.getByPlaceholderText("e.g. Anton Chekhov");
     fireEvent.change(nameInput, { target: { value: "Anton Chekhov" } });
-    const tagInput = screen.getByPlaceholderText("Tags, multiple tags can separate by ;");
+    const tagInput = screen.getByTestId("address-form-tag__input");
     const addButton = screen.getByTestId("input-and-button__button");
     fireEvent.change(tagInput, { target: { value: "writer" } });
     fireEvent.click(addButton);

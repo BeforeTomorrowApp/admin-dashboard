@@ -1,0 +1,41 @@
+@import "../../index.css";
+
+.address-tab {
+  @apply flex-1;
+}
+
+.address-tab__list {
+  @apply mx-auto w-64 my-2;
+}
+
+.address-content__manual {
+  @apply flex-1 flex justify-center overflow-y-auto;
+}
+
+.address-content__form {
+  @apply flex flex-col justify-between w-full max-w-180 text-left;
+}
+
+.address-content__form__group {
+  @apply gap-4;
+}
+
+.address-content__form__field {
+  @apply gap-2;
+}
+
+.address-content__form__tags {
+  @apply w-full flex flex-wrap gap-1;
+}
+
+.address-content__form__textarea {
+  @apply resize-none h-30;
+}
+
+.address-content__form__separator {
+  @apply my-0.5;
+}
+
+.address-content__form__submit {
+  @apply mx-auto w-full;
+}
