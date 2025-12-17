@@ -26,7 +26,7 @@ type ServiceInfo = {
   addressFormat: AddressFormat;
 };
 
-const DEFAULT_LANGUAGE: Language = "ZH";
+const DEFAULT_LANGUAGE: Language = "EN";
 const DEFAULT_THEME: Theme = "system";
 
 // Check local AppConfig, if localStorage or field miss, fill default value

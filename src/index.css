@@ -128,4 +128,9 @@
   #root {
     @apply w-full;
   }
+
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: oklch(0.708 0 0) transparent;
+  }
 }

@@ -84,7 +84,7 @@ export default function CreateAddressesManual() {
         children={(field) => {
           const isInvalid = field.state.meta.isTouched && !field.state.meta.isValid;
           return (
-            <Field className="gap-2">
+            <Field className="address-content__form__field">
               <FieldLabel htmlFor="name">{label}</FieldLabel>
               {type === "input" && (
                 <Input
@@ -100,7 +100,7 @@ export default function CreateAddressesManual() {
               )}
               {type === "textarea" && (
                 <Textarea
-                  className="resize-none h-30"
+                  className="address-content__form__textarea"
                   id={field.name}
                   name={field.name}
                   value={field.state.value}
@@ -127,15 +127,16 @@ export default function CreateAddressesManual() {
         children={(field) => {
           const isInvalid = field.state.meta.isTouched && !field.state.meta.isValid;
           return (
-            <Field>
+            <Field className="address-content__form__field">
               <FieldLabel htmlFor="tags">Tags</FieldLabel>
               <InputAndButton
                 id="tags"
-                placeholder="Tags, multiple tags can separate by ;"
+                data-testid="address-form-tag__input"
+                placeholder="Add tags (separate multiple with ;)"
                 onButtonClick={handleAddTag}
               />
               {field.state.value.length > 0 && (
-                <div className="w-full flex flex-wrap gap-1">
+                <div className="address-content__form__tags">
                   {field.state.value.map((tag) => {
                     return (
                       <TagBadge
@@ -162,20 +163,20 @@ export default function CreateAddressesManual() {
 
   return (
     <form
-      className="flex flex-col justify-between w-full max-w-140 text-left"
+      className="address-content__form"
       onSubmit={(e) => {
         e.preventDefault();
         form.handleSubmit();
       }}
     >
-      <FieldGroup className="gap-5">
+      <FieldGroup className="address-content__form__group">
         <FieldSet>
           <FieldLegend>Basic Info</FieldLegend>
           <FieldDescription>
             Provide the basic infomation of the person. These fields are important for
             indexing and searching in the database.
           </FieldDescription>
-          <FieldGroup className="gap-4">
+          <FieldGroup className="address-content__form__group">
             {getFormTextField({
               fieldName: "name",
               label: "Name",
@@ -190,7 +191,7 @@ export default function CreateAddressesManual() {
             })}
           </FieldGroup>
         </FieldSet>
-        <FieldSeparator />
+        <FieldSeparator className="address-content__form__separator" />
         <FieldSet>
           <FieldLegend>Address</FieldLegend>
           <FieldDescription>
@@ -236,12 +237,10 @@ export default function CreateAddressesManual() {
             })}
           </div>
         </FieldSet>
-      </FieldGroup>
-      <FieldGroup>
+        <FieldSeparator />
         <Field orientation="horizontal">
-          <Button type="submit">Submit</Button>
-          <Button variant="outline" type="button">
-            Cancel
+          <Button type="submit" className="address-content__form__submit">
+            Submit
           </Button>
         </Field>
       </FieldGroup>

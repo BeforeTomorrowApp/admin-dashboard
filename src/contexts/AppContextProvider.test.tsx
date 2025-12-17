@@ -37,14 +37,14 @@ describe("AppContextProvider", () => {
     localStorage.clear();
   });
 
-  it("provides default CN region and system theme", () => {
+  it("provides default EN region and system theme", () => {
     render(
       <AppContextProvider>
         <TestComponent />
       </AppContextProvider>
     );
-    expect(screen.getByText("ZH")).toBeTruthy();
-    expect(screen.getByText("country-first")).toBeTruthy();
+    expect(screen.getByText("EN")).toBeTruthy();
+    expect(screen.getByText("building-first")).toBeTruthy();
     expect(screen.getByText("system")).toBeTruthy();
   });
 

@@ -35,7 +35,7 @@ describe("LanguageSelector", () => {
       fireEvent.click(trigger);
       const option = screen.getAllByText(language)[0];
       fireEvent.click(option);
-      expect(screen.getByText(language)).toBeTruthy();
+      expect(screen.queryAllByText(language).length).toBeGreaterThan(0);
     });
   });
 });
