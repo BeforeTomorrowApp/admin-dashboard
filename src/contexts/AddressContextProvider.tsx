@@ -15,7 +15,7 @@ interface AddressContextType {
   generatedAddresses: ZodGenerateAddressesResponse;
   updateSystemPrompt: (language: Language, prompt: string) => void;
   updateUserPrompt: (prompt: UserPrompt) => void;
-  storeGeneratedAddresses: (addresses: ZodGenerateAddressesResponse) => void;
+  saveGeneratedAddresses: (addresses: ZodGenerateAddressesResponse) => void;
 }
 
 const AddressContext = createContext<AddressContextType | undefined>(undefined);
@@ -39,9 +39,12 @@ export default function AddressContextProvider({
     },
     [userPrompt]
   );
-  const storeGeneratedAddresses = (addresses: ZodGenerateAddressesResponse) => {
-    setGeneratedAddresses(addresses);
-  };
+  const saveGeneratedAddresses = useCallback(
+    (addresses: ZodGenerateAddressesResponse) => {
+      setGeneratedAddresses(addresses);
+    },
+    []
+  );
 
   return (
     <AddressContext.Provider
@@ -51,7 +54,7 @@ export default function AddressContextProvider({
         generatedAddresses,
         updateSystemPrompt,
         updateUserPrompt,
-        storeGeneratedAddresses,
+        saveGeneratedAddresses,
       }}
     >
       {children}

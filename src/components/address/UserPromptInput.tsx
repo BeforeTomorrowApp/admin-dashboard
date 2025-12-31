@@ -45,10 +45,10 @@ const getEffortIcon = (effort: ReasonEffort) => {
 };
 
 export default function UserPromptInput() {
-  const { systemPrompt, userPrompt, updateUserPrompt } = useAddressContext();
-  const { mutate, isPending } = useGenerateAddressesMutation();
+  const { systemPrompt, userPrompt, updateUserPrompt, saveGeneratedAddresses } =
+    useAddressContext();
+  const { mutate, isPending } = useGenerateAddressesMutation(saveGeneratedAddresses);
   const { t } = useTranslation("address:newAddress");
-
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   const [gptModel, setGptModel] = useState<GPTModel>(DEFAULT_MODEL);
@@ -64,7 +64,7 @@ export default function UserPromptInput() {
 
   const clearInput = () => {
     if (textareaRef.current) {
-      textareaRef.current!.value = "";
+      textareaRef.current.value = "";
       updateUserPrompt("");
     }
   };
@@ -151,7 +151,7 @@ export default function UserPromptInput() {
             </Button>
             <Button
               size="icon-sm"
-              type="submit"
+              type="button" // we don't use submit which will cause the form submission event
               onClick={submitRequest}
               disabled={isPending}
             >

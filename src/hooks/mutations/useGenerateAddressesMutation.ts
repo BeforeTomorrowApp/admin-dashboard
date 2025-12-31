@@ -6,7 +6,9 @@ import type {
   ZodGenerateAddressesResponse,
 } from "@/schemas/address-schema";
 
-export function useGenerateAddressesMutation() {
+export function useGenerateAddressesMutation(
+  saveResultFn: (results: ZodGenerateAddressesResponse) => void
+) {
   const mutation = useMutation({
     mutationFn: (requestBody: ZodGenerateAddressesRequest) => {
       return generateAddresses(requestBody);
@@ -20,6 +22,7 @@ export function useGenerateAddressesMutation() {
         toast.error(`failed to recognize the user prompt, got 0 result.`);
         return;
       }
+      saveResultFn(data);
       toast.success(`addresses generated successfully: ${names.join(", ")}`);
     },
   });
