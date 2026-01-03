@@ -10,7 +10,7 @@ type PopoverSelectorProps<T> = {
   value: T;
   title: string;
   description: string;
-  onSelect: (model: T) => void;
+  onSelect: (option: T) => void;
   popOverClassName?: string;
 } & PropsWithChildren;
 
