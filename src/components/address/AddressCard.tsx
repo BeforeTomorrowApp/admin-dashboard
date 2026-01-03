@@ -1,3 +1,4 @@
+import type { ReactNode } from "react";
 import {
   type GeneratedAddressSchema,
   type AddressItemSchema,
@@ -13,9 +14,7 @@ import {
 
 type AddressCardProps = {
   addressItem: GeneratedAddressSchema;
-  onEdit?: () => void;
-  onSave?: () => void;
-  onDelete?: () => void;
+  actions: ReactNode;
 };
 
 // Address will be in the international format
@@ -32,17 +31,16 @@ const formatAddressLines = (addressItem: AddressItemSchema) => {
   return lines;
 };
 
-export default function AddressCard({
-  addressItem,
-  // onEdit,
-  // onSave,
-  // onDelete,
-}: AddressCardProps) {
+export default function AddressCard({ addressItem, actions }: AddressCardProps) {
   const addressLines = formatAddressLines(addressItem as AddressItemSchema);
+
   return (
     <Card className="gap-3 p-2.5 h-full">
       <CardHeader className="px-1">
-        <CardTitle>{addressItem.name}</CardTitle>
+        <CardTitle className="w-full flex justify-between gap-2 items-center">
+          <p>{addressItem.name}</p>
+          {actions}
+        </CardTitle>
         <CardDescription className="text-xs text-primary/50">
           {addressItem.briefIntro}
         </CardDescription>

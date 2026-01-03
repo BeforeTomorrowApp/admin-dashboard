@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, type KeyboardEvent } from "react";
 import { useTranslation } from "react-i18next";
 import {
   Sparkles,
@@ -76,15 +76,16 @@ export default function UserPromptInput() {
     return gptModel.startsWith("gpt-5"); // only gpt-5 models accept reasoning effort parameters
   };
 
-  const submitRequest = () => {
-    if (!systemPrompt || userPrompt.length === 0) return;
+  const submitRequest = (currentPrompt?: string) => {
+    if (!systemPrompt) return;
     const requestBody: GenerateAddressesRequestSchema = {
       language: systemPrompt.language,
       systemPrompt: systemPrompt.prompt,
-      prompt: userPrompt,
+      prompt: currentPrompt ? currentPrompt.trim() : userPrompt.trim(),
       model: gptModel,
       reasoningEffort: reasonEffort,
     };
+    if (requestBody.prompt.length === 0) return;
     mutate(requestBody);
   };
 
@@ -100,6 +101,32 @@ export default function UserPromptInput() {
     setGeneratingState(isPending);
   }, [isPending, setGeneratingState]);
 
+  const keyboardControl = (e: KeyboardEvent<HTMLTextAreaElement>) => {
+    if (e.key === "Escape") {
+      textareaRef.current?.blur();
+      return;
+    }
+    if (e.key === "Enter") {
+      if (e.shiftKey) {
+        // Shift+Enter: Insert new line
+        const textarea = textareaRef.current;
+        if (textarea) {
+          const { selectionStart, selectionEnd, value } = textarea;
+          const newValue =
+            value.substring(0, selectionStart) + "\n" + value.substring(selectionEnd);
+          textarea.value = newValue;
+          textarea.selectionStart = textarea.selectionEnd = selectionStart + 1;
+          e.preventDefault();
+        }
+      } else {
+        // Enter: Submit
+        textareaRef.current?.blur();
+        submitRequest(textareaRef.current?.value);
+        e.preventDefault();
+      }
+    }
+  };
+
   return (
     <>
       <FieldLabel htmlFor="prompt">{t("prompt.userPrompt")}</FieldLabel>
@@ -110,6 +137,7 @@ export default function UserPromptInput() {
           ref={textareaRef}
           disabled={isPending}
           className="address-component__prompt__textarea"
+          onKeyDown={keyboardControl}
         />
         <div className="address-component__prompt__actions">
           <div className="address-component__prompt__action__sub">
@@ -125,6 +153,7 @@ export default function UserPromptInput() {
                 size="sm"
                 variant="ghost"
                 className="address-component__prompt__trigger w-24 font-normal"
+                disabled={isPending}
               >
                 {gptModel}
               </Button>
@@ -142,7 +171,7 @@ export default function UserPromptInput() {
                 variant="ghost"
                 data-testid="address-userprompt-effort"
                 className="address-component__prompt__trigger"
-                disabled={!effortEnabled()}
+                disabled={!effortEnabled() || isPending}
               >
                 {effortEnabled() ? getEffortIcon(reasonEffort) : getEffortIcon("none")}
               </Button>
@@ -156,14 +185,15 @@ export default function UserPromptInput() {
               data-testid="address-userprompt-clear"
               type="button"
               onClick={clearInput}
+              disabled={isPending}
             >
               <BrushCleaning />
             </Button>
             <Button
-              size="icon-sm"
+              size="sm"
               data-testid="address-userprompt-submit"
               type="button" // we don't use submit which will cause the form submission event
-              onClick={submitRequest}
+              onClick={() => submitRequest()}
               disabled={isPending}
             >
               {isPending ? <Spinner /> : <Sparkles />}
